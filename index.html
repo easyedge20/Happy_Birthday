@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Motii</title>
+
+<style>
+body{
+    margin:0;
+    overflow:hidden;
+    background: radial-gradient(circle at bottom, #000428, #000);
+    font-family:Arial, sans-serif;
+}
+
+/* 🌌 Stars */
+.stars{
+    position:fixed;
+    width:100%;
+    height:100%;
+    background:url('https://www.transparenttextures.com/patterns/stardust.png');
+    opacity:0.6;
+    z-index:-3;
+}
+
+/* 🎆 Fireworks GIF overlay */
+body::before{
+    content:"";
+    position:fixed;
+    width:100%;
+    height:100%;
+    background:url("https://media.giphy.com/media/26tOZ42Mg6pbTUPHW/giphy.gif") center/cover no-repeat;
+    opacity:0.2;
+    z-index:-2;
+}
+
+/* 🎞 Slideshow */
+.slideshow{
+    position:fixed;
+    width:100%;
+    height:100%;
+    z-index:-4;
+}
+.slide{
+    position:absolute;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    opacity:0;
+    animation:fade 25s infinite;
+}
+.slide:nth-child(1){animation-delay:0s;}
+.slide:nth-child(2){animation-delay:3s;}
+.slide:nth-child(3){animation-delay:6s;}
+.slide:nth-child(4){animation-delay:9s;}
+.slide:nth-child(5){animation-delavy:12s;}
+.slide:nth-child(6){animation-delay:15s;}
+.slide:nth-child(7){animation-delay:18s;}
+.slide:nth-child(8){animation-delay:21s;}
+.slide:nth-child(9){animation-delay:24s;}
+@keyframes fade{
+    0%{opacity:0;}
+    8%{opacity:1;}
+    30%{opacity:1;}
+    38%{opacity:0;}
+    100%{opacity:0;}
+}
+
+/* 🫧 Bubble Style (Improved Glass Look) */
+.bubble{
+    position:absolute;
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    overflow:hidden;
+    background:rgba(255,255,255,0.15);
+    border:3px solid rgba(255,255,255,0.7);
+    box-shadow:
+        inset -10px -10px 20px rgba(255,255,255,0.4),
+        inset 10px 10px 20px rgba(0,0,0,0.3),
+        0 0 20px rgba(255,255,255,0.4);
+}
+.bubble img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    opacity:0.85;
+}
+
+/* 🎯 Message */
+.message{
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%) scale(0.8);
+    width:90%;
+    max-width:1200px;
+    padding:50px 40px;
+    text-align:center;
+    
+    background:rgba(255,255,255,0.08);
+    backdrop-filter:blur(15px);
+    -webkit-backdrop-filter:blur(15px);
+
+    border-radius:25px;
+    border:1px solid rgba(255,255,255,0.3);
+    box-shadow:0 0 40px rgba(255,255,255,0.2);
+
+    color:white;
+    opacity:0;
+    transition:opacity 2s ease, transform 1s ease;
+    z-index:20;
+}
+.message h1{
+    margin:0;
+    font-size:55px;
+    letter-spacing:2px;
+}
+
+.message h2{
+    margin:15px 0;
+    font-size:35px;
+    font-weight:300;
+    color:#ffccff;
+}
+
+.message p{
+    font-size:20px;
+    margin-top:15px;
+    opacity:0.9;
+}
+/* 🎆 Firework burst */
+.firework{
+    position:fixed;
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    animation:explode 1.5s ease-out forwards;
+}
+@keyframes explode{
+    from{transform:scale(1);opacity:1;}
+    to{transform:scale(30);opacity:0;}
+}
+
+/* 📱 Responsive */
+@media(max-width:600px){
+    .bubble{width:80px;height:80px;}
+    .message h1{font-size:30px;}
+    .message h2{font-size:22px;}
+    .message p{font-size:14px;}
+}
+</style>
+</head>
+
+<body>
+
+<div class="stars"></div>
+
+<!-- 🎞 Slideshow -->
+<div class="slideshow">
+    <img src="img2.jpg" class="slide">
+    <img src="img3.jpg" class="slide">
+    <img src="img4.jpg" class="slide">
+    <img src="img10.jpg" class="slide">
+    <img src="img6.jpg" class="slide">
+    <img src="img7.jpg" class="slide">
+    <img src="img8.jpg" class="slide">
+    <img src="img9.jpg" class="slide">
+</div>
+    
+<audio id="bgMusic" autoplay loop muted playsinline>
+    <source src="bday.mp3" type="audio/mpeg">
+</audio>
+<!-- 🎯 Message -->
+<div class="message" id="birthdayMessage">
+    <h1>Happy Birthday Motii</h1>
+    <p>
+        May your life be filled with happiness, success, love, and endless joy.
+        Keep shining and rising higher!
+    </p>
+</div>
+
+<script>
+const images=[
+ "img1.jpg",
+ "img2.jpg",
+ "img3.jpg",
+ "img4.jpg",
+ "img6.jpg",
+ "img7.jpg",
+ "img8.jpg",
+ "img10.jpg"
+];
+
+let bubbles=[];
+const size=100;
+
+/* 🫧 Create Physics Bubble */
+function createBubble(){
+    const bubble=document.createElement("div");
+    bubble.className="bubble";
+    bubble.style.left=Math.random()*(window.innerWidth-size)+"px";
+    bubble.style.top=window.innerHeight+"px";
+
+    const img=document.createElement("img");
+    img.src=images[Math.floor(Math.random()*images.length)];
+    bubble.appendChild(img);
+
+    document.body.appendChild(bubble);
+
+    let speed=1.5;
+
+    function move(){
+        let top=parseFloat(bubble.style.top);
+        let left=parseFloat(bubble.style.left);
+
+        if(top<=0){
+            bubble.style.top="0px";
+            bubbles.push(bubble);
+            return;
+        }
+
+        for(let other of bubbles){
+            let oTop=parseFloat(other.style.top);
+            let oLeft=parseFloat(other.style.left);
+
+            let dx=oLeft-left;
+            let dy=oTop-top;
+            let distance=Math.sqrt(dx*dx+dy*dy);
+
+            if(distance<size){
+                bubble.style.top=(oTop+size-5)+"px";
+                bubbles.push(bubble);
+                return;
+            }
+        }
+
+        bubble.style.top=(top-speed)+"px";
+        requestAnimationFrame(move);
+    }
+
+    move();
+}
+
+setInterval(createBubble,800);
+
+/* 🎆 Fireworks */
+function createFirework(){
+    const firework=document.createElement("div");
+    firework.className="firework";
+    document.body.appendChild(firework);
+
+    firework.style.left=Math.random()*window.innerWidth+"px";
+    firework.style.top=Math.random()*window.innerHeight/2+"px";
+    firework.style.background=`hsl(${Math.random()*360},100%,60%)`;
+
+    setTimeout(()=>{firework.remove();},1500);
+}
+setInterval(createFirework,2000);
+
+/* ⏳ Show Message After 10 Seconds */
+setTimeout(()=>{
+    const msg=document.getElementById("birthdayMessage");
+    msg.style.opacity="1";
+    msg.style.transform="translate(-50%,-50%) scale(1)";
+},10000);
+
+const music = document.getElementById("bgMusic");
+
+/* Start muted autoplay */
+music.play().catch(() => {});
+
+/* Unmute on first touch */
+document.addEventListener("touchstart", function () {
+    music.muted = false;
+    music.play();
+}, { once: true });
+
+document.addEventListener("click", function () {
+    music.muted = false;
+    music.play();
+}, { once: true });
+</script>
+
+</body>
+</html>
